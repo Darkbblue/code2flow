@@ -7,6 +7,8 @@ import subprocess
 import sys
 import time
 
+import astpretty
+
 from .python import Python
 from .javascript import Javascript
 from .ruby import Ruby
@@ -345,7 +347,8 @@ def make_file_group(tree, filename, extension):
 
     subgroup_trees, node_trees, body_trees = language.separate_namespaces(tree)
     group_type = GROUP_TYPE.FILE
-    token = os.path.split(filename)[-1].rsplit('.' + extension, 1)[0]
+    #token = os.path.split(filename)[-1].rsplit('.' + extension, 1)[0]
+    token = filename.rsplit('.' + extension, 1)[0]
     line_number = 0
     display_name = 'File'
     import_tokens = language.file_import_tokens(filename)

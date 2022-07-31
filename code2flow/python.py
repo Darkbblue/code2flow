@@ -2,6 +2,8 @@ import ast
 import logging
 import os
 
+import astpretty
+
 from .model import (OWNER_CONST, GROUP_TYPE, Group, Node, Call, Variable,
                     BaseLanguage, djoin)
 
@@ -51,6 +53,7 @@ def make_calls(lines):
         for element in ast.walk(tree):
             if type(element) != ast.Call:
                 continue
+            astpretty.pprint(element)
             call = get_call_from_func_element(element.func)
             if call:
                 calls.append(call)
@@ -212,6 +215,8 @@ class Python(BaseLanguage):
         if parent.group_type == GROUP_TYPE.FILE:
             import_tokens = [djoin(parent.token, token)]
 
+        token = djoin(parent.token, token)
+
         return [Node(token, calls, variables, parent, import_tokens=import_tokens,
                      line_number=line_number, is_constructor=is_constructor)]
 
@@ -226,6 +231,7 @@ class Python(BaseLanguage):
         :rtype: Node
         """
         token = "(global)"
+        token = djoin(parent.token, token)
         line_number = 0
         calls = make_calls(lines)
         variables = make_local_variables(lines, parent)
@@ -252,6 +258,8 @@ class Python(BaseLanguage):
 
         import_tokens = [djoin(parent.token, token)]
         inherits = get_inherits(tree)
+
+        token = djoin(parent.token, token)
 
         class_group = Group(token, group_type, display_name, import_tokens=import_tokens,
                             inherits=inherits, line_number=line_number, parent=parent)
